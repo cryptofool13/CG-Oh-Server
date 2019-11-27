@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const db = require("./db");
+const db = require("../db");
 
 function getUsers(req, res) {
   db.query("SELECT * FROM users ORDER BY id ASC").then(result => {

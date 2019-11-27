@@ -1,8 +1,8 @@
-const { getUsers, userExists, createNewUser, logIn } = require("./auth");
+const { auth } = require("./controllers");
 
 module.exports = function router(app) {
   // user authentication routes
-  app.get("/", getUsers); // remove this route
-  app.post("/signup", createNewUser);
-  app.post("/login", logIn);
+  app.get("/", auth.getUsers); // remove this route
+  app.post("/signup", auth.createNewUser);
+  app.post("/login", auth.logIn);
 };
