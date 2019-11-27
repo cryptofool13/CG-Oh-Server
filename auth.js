@@ -8,35 +8,49 @@ function getUsers(req, res) {
     });
 }
 
-function createNewUser({ name, password }) {
-    let ifUser = userExists(name).then(res => {
-        if (res.rowCount > 0) {
-            return 1;
+function createNewUser(req, res) {
+    let { name, password } = req.body;
+    if (!name || !password) {
+        return res
+            .status(422)
+            .send({ message: "must supply name and password" });
+    }
+    let ifUser = userExists(name).then(user => {
+        if (user.rowCount > 0) {
+            return res.status(400).send({ message: "user already exists" });
         }
         db.query(
             "INSERT INTO users (name, password) VALUES ($1, crypt($2, gen_salt('bf')));",
             [name, password]
         ).then(result => {
-            return { message: "user created", result };
+            return res.status(200).send({ message: "user created" });
         });
     });
 }
 
-function logIn({ name, password }) {
+function logIn(req, res) {
+    let { name, password } = req.body;
+    if (!name || !password) {
+        return res
+            .status(422)
+            .send({ message: "must supply name and password" });
+    }
+
     let noUser = userExists(name).then(user => {
         if (user.rowCount == 0) {
-            return 1;
+            return res.status(400).send({ message: "user does not exist" });
         }
         db.query(
             "select id from users where name = $1 and password = crypt($2, password)",
             [name, password]
         ).then(result => {
             if (result.rowCount == 0) {
-                console.log("password failed");
-                return 1;
+                return res.status(400).send({ message: "incorrect password" });
             }
-            const token = jwt.sign(result.rows[0], process.env.JWT_SECRET, {expiresIn: '1h'});
-            return token;
+            const token = jwt.sign(result.rows[0], process.env.JWT_SECRET, {
+                expiresIn: "1h"
+            });
+            return res.status(200).send(token);
         });
     });
 }

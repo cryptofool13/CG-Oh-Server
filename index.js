@@ -2,23 +2,19 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv").config();
 
-const { getUsers, userExists, createNewUser, logIn } = require("./auth");
+const router = require('./router')
 
 const app = express();
+const api = express()
 const port = process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/api/v1', api)
 
-logIn({ name: "mike", password: "krud_WAF_9!" });
-
-app.get("/", getUsers);
+router(api)
 
 app.listen(port, listening);
-
-function rootHandler(req, res) {
-    res.send("CGO API");
-}
 
 function listening() {
     console.log(`API listening at http://localhost:${port}/`);
