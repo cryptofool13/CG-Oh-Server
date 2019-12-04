@@ -7,5 +7,7 @@ module.exports = function router(app) {
   app.post("/login", auth.logIn);
   // scanner routes
   app.get('/inventory/:upc', inventory.getItem)
-  app.post('/inventory/add-item')
+  // admin routes
+  app.get('/inventory', inventory.getAllItems)
+  app.post('/inventory/add-item', inventory.addItem)
 };
