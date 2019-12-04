@@ -2,6 +2,13 @@ const jwt = require("jsonwebtoken");
 
 const db = require("../db");
 
+module.exports = {
+  getUsers,
+  logIn,
+  userExists,
+  createNewUser
+};
+
 function getUsers(req, res) {
   db.query("SELECT * FROM users ORDER BY id ASC").then(result => {
     res.status(200).json(result.rows);
@@ -54,10 +61,3 @@ function logIn(req, res) {
 function userExists(username) {
   return db.query("SELECT * FROM users WHERE name = $1;", [username]);
 }
-
-module.exports = {
-  getUsers,
-  logIn,
-  userExists,
-  createNewUser
-};
