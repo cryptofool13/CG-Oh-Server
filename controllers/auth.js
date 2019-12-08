@@ -20,7 +20,7 @@ function createNewUser(req, res) {
   if (!name || !password) {
     return res.status(422).send({ message: "must supply name and password" });
   }
-  if(role != 'role' || role != 'manager') {
+  if(role != 'admin' || role != 'manager') {
     role = 'employee'
   }
   let ifUser = userExists(name).then(user => {
