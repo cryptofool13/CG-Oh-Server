@@ -15,13 +15,18 @@ function getUsers(req, res) {
   });
 }
 
+function determineRole(token) {
+  let decoded = jwt.verify(token, process.env.JWT_SECRET);
+  console.log(decoded);
+}
+
 function createNewUser(req, res) {
   let { name, password, role } = req.body;
   if (!name || !password) {
     return res.status(422).send({ message: "must supply name and password" });
   }
-  if(role != 'admin' || role != 'manager') {
-    role = 'employee'
+  if (role !== "admin" && role !== "manager") {
+    role = "employee";
   }
   let ifUser = userExists(name).then(user => {
     if (user.rowCount > 0) {
@@ -53,7 +58,7 @@ function logIn(req, res) {
       if (result.rowCount == 0) {
         return res.status(400).send({ message: "incorrect password" });
       }
-      console.log(result.rows[0])
+      console.log(result.rows[0]);
       const token = jwt.sign(result.rows[0], process.env.JWT_SECRET, {
         expiresIn: "1h"
       });
