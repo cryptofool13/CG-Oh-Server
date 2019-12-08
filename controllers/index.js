@@ -1,4 +1,4 @@
 module.exports = {
-  auth: require("./auth"),
-  inventory: require("./inventory")
-};
+	auth: require("./auth"),
+	inventory: require("./inventory")
+}
