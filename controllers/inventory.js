@@ -1,5 +1,4 @@
 const db = require("../db")
-const { isValidUpc } = require("../helpers/util")
 
 module.exports = {
 	getItem,
@@ -16,9 +15,6 @@ function getAllItems(req, res) {
 function getItem(req, res) {
 	let upc = req.params.upc
 
-	if (!isValidUpc(upc)) {
-		res.status(422).send({ message: "invalid upc" })
-	}
 	db.query(
 		"SELECT item, on_hand, shelf_cap, case_sz, price FROM items WHERE upc = $1",
 		[upc]
@@ -33,10 +29,6 @@ function getItem(req, res) {
 function addItem(req, res) {
 	// insert an item into ITEMS table
 	const { upc, item, on_hand, shelf_cap, case_sz, price } = req.body
-
-	if (!isValidUpc(upc)) {
-		res.status(422).send({ message: "invalid upc" })
-	}
 
 	// check if item exists
 	db.query("SELECT upc FROM items WHERE upc = $1", [upc]).then(checkResult => {
@@ -60,8 +52,4 @@ function addItem(req, res) {
 function setInventory(req, res) {
 	// look up an item and set the on_hand field
 	const { upc, input } = req.body
-
-	if (!isValidUpc(upc)) {
-		res.status(422).send({ message: "invalid upc" })
-	}
 }
