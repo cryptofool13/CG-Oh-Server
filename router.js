@@ -11,29 +11,6 @@ module.exports = function router(app) {
 	app.post("/login", auth.logIn)
 
 	// scanner routes
-
-	app.use(function(req, res, next) {
-		// if upc is on req.body, check if it is valid
-		if (!req.body && !req.params) {
-			next()
-		}
-		if (req.body.upc) {
-			if (!isValidUpc(req.body.upc)) {
-				res.status(422).send({ message: "invalid upc" })
-			}
-		}
-		next()
-	})
-
-	app.use("/inventory/:upc", function(req, res, next) {
-		if (req.params.upc) {
-			if (!isValidUpc(req.params.upc)) {
-				res.status(422).send({ message: "invalid upc" })
-			}
-		}
-		next()
-	})
-
 	app.use(function(req, res, next) {
 		// check if user has valid token
 		if (!req.headers.authorization) {
@@ -50,6 +27,30 @@ module.exports = function router(app) {
 		next()
 	})
 
+	app.use(function(req, res, next) {
+		// if upc is on req.body, check if it is valid
+		if (!req.body && !req.params) {
+			next()
+		}
+		if (req.body.upc) {
+			if (!isValidUpc(req.body.upc)) {
+				return res.status(422).send({ message: "invalid upc" })
+			}
+		}
+		next()
+	})
+
+	app.use(function(req, res, next) {
+		if (req.params.upc) {
+			if (!isValidUpc(req.params.upc)) {
+				console.log(req.params)
+				return res.status(422).send({ message: "invalid upc" })
+			}
+		}
+		next()
+	})
+
+	app.post("/inventory/set/:upc", inventory.setInventory)
 	app.get("/inventory/:upc", inventory.getItem)
 
 	// manager routes
