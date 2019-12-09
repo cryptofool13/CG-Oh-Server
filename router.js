@@ -17,7 +17,7 @@ module.exports = function router(app) {
 			return res.status(403).json({ error: "No credentials sent!" })
 		}
 		let token = req.headers.authorization
-		let decoded = jwt.verify(token, process.env.JWT_SECRET)
+		let decoded = jwt.decode(token, process.env.JWT_SECRET)
 		if (Date.now() >= decoded.exp * 1000) {
 			return res
 				.status(401)
