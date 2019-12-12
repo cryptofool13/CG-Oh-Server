@@ -50,7 +50,7 @@ module.exports = function router(app) {
 		next()
 	})
 
-	app.post("/inventory/set/:upc", inventory.setInventory)
+	app.post("/inventory/:upc/update", inventory.updateInventory)
 	app.get("/inventory/:upc", inventory.getItem)
 
 	// manager routes
@@ -82,6 +82,7 @@ module.exports = function router(app) {
 		}
 		next()
 	})
-
+	app.post('/inventory/:upc/price', inventory.setPrice)
 	app.post("/inventory/add-item", inventory.addItem)
+	app.post('/inventory/:upc/set', inventory.setItem)
 }

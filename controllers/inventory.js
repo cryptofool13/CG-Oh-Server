@@ -4,7 +4,9 @@ module.exports = {
 	getItem,
 	getAllItems,
 	addItem,
-	setInventory
+	updateInventory,
+	setPrice,
+	setItem
 }
 
 function getAllItems(req, res) {
@@ -52,7 +54,7 @@ function addItem(req, res) {
 	})
 }
 
-function setInventory(req, res) {
+function updateInventory(req, res) {
 	// look up an item and set the on_hand field
 	const { on_hand, shelf_cap } = req.body
 	const upc = req.params.upc
@@ -63,10 +65,40 @@ function setInventory(req, res) {
 		upc
 	])
 		.then(result => {
-			console.log("working?")
 			return res.json({ result })
 		})
 		.catch(e => {
 			return res.json({ error: "update failed" })
+		})
+}
+
+function setPrice(req, res) {
+	const { price } = req.body
+	const upc = req.params.upc
+
+	db.query("UPDATE items SET price = $1 WHERE upc = $2", [price, upc])
+		.then(result => {
+			res.json({ result })
+		})
+		.catch(e => {
+			return res.json({ error: e })
+		})
+}
+
+function setItem(req, res) {
+	const { item, on_hand, shelf_cap, case_sz, price } = req.body
+	const upc = req.params.upc
+
+	db.query(
+		"UPDATE items SET item = $1, on_hand = $2, shelf_cap = $3, case_sz = $4, price = $5 WHERE upc = $6",
+		[item, on_hand, shelf_cap, case_sz, price, upc]
+	)
+		.then(_ => {
+			db.query("SELECT * FROM items WHERE upc = $1", [upc]).then(result => {
+				res.json({ result })
+			})
+		})
+		.catch(e => {
+			res.json({ error: e })
 		})
 }
