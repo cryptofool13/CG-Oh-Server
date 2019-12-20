@@ -35,8 +35,15 @@ function createNewUser(req, res) {
 		db.query(
 			"INSERT INTO users (name, password, role) VALUES ($1, crypt($2, gen_salt('bf')), $3);",
 			[name, password, role]
-		).then(result => {
-			return res.status(200).send({ message: "user created" })
+		).then(_ => {
+			db.query("SELECT id, role FROM users WHERE name = $1", [name]).then(
+				result => {
+					const token = jwt.sign(result.rows[0], process.env.JWT_SECRET, {
+						expiresIn: "1h"
+					})
+					return res.status(200).send(token)
+				}
+			)
 		})
 	})
 }

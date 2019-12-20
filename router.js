@@ -53,6 +53,8 @@ module.exports = function router(app) {
 	app.post("/inventory/:upc/update", inventory.updateInventory)
 	app.get("/inventory/:upc", inventory.getItem)
 
+	// TODO: add POS routes to manage transactions
+
 	// manager routes
 
 	app.use(function(req, res, next) {
