@@ -29,6 +29,15 @@ function isValidUpc(upc) {
 	return checkDigit(upc.slice(0, -1)) == check
 }
 
+// items = [{upc, ct}]
+// returns [ct1, upc1, ..., ct#, upc#] (flat)
+function flattenItems(items) {
+	let flattened = []
+	items.forEach(item => {
+		flattened.push(item.ct, item.upc)
+	})
+}
+
 module.exports = {
 	isValidUpc
 }
