@@ -36,8 +36,10 @@ function flattenItems(items) {
 	items.forEach(item => {
 		flattened.push(item.ct, item.upc)
 	})
+	return flattened
 }
 
 module.exports = {
-	isValidUpc
+	isValidUpc,
+	flattenItems
 }
