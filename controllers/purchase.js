@@ -4,7 +4,6 @@ const { isValidUpc, flattenItems } = require("../helpers/util")
 module.exports = {}
 
 // generate an update query to insert into transaction
-// throw error if upc is invalid or if ct variable is not an Int > 0
 function updateItem(ct, upc) {
 	// TODO: move V this logic to POS api V
 	// if (!isValidUpc(upc)) {
@@ -16,6 +15,7 @@ function updateItem(ct, upc) {
 	return `UPDATE items SET on_hand = on_hand - ${ct} WHERE upc = '${upc}';`
 }
 
+// build query replacing values with relative placeholder
 function buildTransaction(items) {
 	let query = ""
 	for (let i = 0; i < items.length; i += 2) {
