@@ -13,8 +13,8 @@ function purchaseItems(req, res) {
 	const items = flattenItems(req.body.items)
 	listify(items)
 
-	let error
-
+	let updateError
+	
 	client.exists("items", (err, exists) => {
 		if (exists) {
 			client.llen("items", (err, len) => {
@@ -24,15 +24,10 @@ function purchaseItems(req, res) {
 						db.query("UPDATE items SET on_hand = on_hand - $1 WHERE upc = $2", [
 							ct,
 							upc
-						]).then().catch(e => {
-							error = e
-						})
+						]).then().catch(e => {console.log(e)})
 					})
 				}
-				if(error) {
-					return res.status
-				}
-				res.send({ message: "purchase successful" })
+				return res.send({ message: "purchase successful" })
 			})
 		}
 	})
