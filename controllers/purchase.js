@@ -14,9 +14,9 @@ function updateItem(ct, upc) {
 	// if (ct < 1 || !Number.isInteger(ct)) {
 	// 	throw Error(`invalid count: ${ct}`)
 	// }
-	if (!isValidUpc(upc)) {
-		throw new Error(`invalid upc: ${upc}`)
-	}
+	// if (!isValidUpc(upc)) {
+	// 	throw new Error(`invalid upc: ${upc}`)
+	// }
 	return `UPDATE items SET on_hand = on_hand - ${ct} WHERE upc = '${upc}';`
 }
 
@@ -55,6 +55,7 @@ function purchaseItems(req, res) {
 			}
 			const queryText = buildTransaction(items)
 			client.query(queryText, items, (err, result) => {
+				console.log('err', err)
 				if (shouldAbort(err)) {
 					res.status(500).json({ error: err })
 				}

@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken")
 
 const db = require("../db")
 
+// EXPORTS
 module.exports = {
 	getUsers,
 	logIn,
@@ -9,6 +10,7 @@ module.exports = {
 	deleteUser
 }
 
+// CONTROLLERS
 function getUsers(req, res) {
 	db.query("SELECT * FROM users ORDER BY id ASC").then(result => {
 		res.status(200).json(result.rows)
@@ -86,6 +88,7 @@ function deleteUser(req, res) {
 	})
 }
 
+// HELPER FUNCTIONS
 function userByName(username) {
 	return db.query("SELECT * FROM users WHERE name = $1;", [username])
 }

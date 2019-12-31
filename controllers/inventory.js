@@ -1,5 +1,6 @@
 const db = require("../db")
 
+// EXPORTS
 module.exports = {
 	getItem,
 	getAllItems,
@@ -9,6 +10,7 @@ module.exports = {
 	setItem
 }
 
+// CONTROLLERS
 function getAllItems(req, res) {
 	db.query("SELECT * from items ORDER BY upc DESC").then(result => {
 		return res.send({ items: result.rows })
