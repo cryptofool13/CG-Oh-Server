@@ -5,19 +5,14 @@ const db = require("../db")
 module.exports = {
 	getUsers,
 	logIn,
-	userExists,
-	createNewUser
+	createNewUser,
+	deleteUser
 }
 
 function getUsers(req, res) {
 	db.query("SELECT * FROM users ORDER BY id ASC").then(result => {
 		res.status(200).json(result.rows)
 	})
-}
-
-function determineRole(token) {
-	let decoded = jwt.verify(token, process.env.JWT_SECRET)
-	console.log(decoded)
 }
 
 function createNewUser(req, res) {
@@ -28,7 +23,7 @@ function createNewUser(req, res) {
 	if (role !== "admin" && role !== "manager") {
 		role = "employee"
 	}
-	let ifUser = userExists(name).then(user => {
+	let ifUser = userByName(name).then(user => {
 		if (user.rowCount > 0) {
 			return res.status(400).send({ message: "user already exists" })
 		}
@@ -54,7 +49,7 @@ function logIn(req, res) {
 		return res.status(422).send({ message: "must supply name and password" })
 	}
 
-	let noUser = userExists(name).then(user => {
+	let ifUser = userByName(name).then(user => {
 		if (user.rowCount == 0) {
 			return res.status(400).send({ message: "user does not exist" })
 		}
@@ -74,6 +69,32 @@ function logIn(req, res) {
 	})
 }
 
-function userExists(username) {
+function deleteUser(req, res) {
+	let { id } = req.body
+	if (!id) {
+		return res.status(422).send({ message: "must supply user id" })
+	}
+
+	let ifUser = userById(id).then(user => {
+		if (user.rowCount == 0) {
+			return res.status(400).send({ message: "user does not exist" })
+		}
+
+		db.query("DELETE FROM users where id = $1", [id]).then(result => {
+			res.send({ result })
+		})
+	})
+}
+
+function userByName(username) {
 	return db.query("SELECT * FROM users WHERE name = $1;", [username])
+}
+
+function userById(id) {
+	return db.query("SELECT * FROM users WHERE id = $1;", [id])
+}
+
+function determineRole(token) {
+	let decoded = jwt.verify(token, process.env.JWT_SECRET)
+	console.log(decoded)
 }
