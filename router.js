@@ -1,14 +1,14 @@
 const jwt = require("jsonwebtoken")
 
-const { auth, inventory } = require("./controllers")
+const { auth, inventory, purchase } = require("./controllers")
 const { isValidUpc } = require("./helpers/util")
 
 module.exports = function router(app) {
 	// user authentication routes
 
-	app.get("/", auth.getUsers) // remove this route
-	app.post("/signup", auth.createNewUser)
-	app.post("/login", auth.logIn)
+	app.get("/auth", auth.getUsers) // remove this route
+	app.post("/auth/signup", auth.createNewUser)
+	app.post("/auth/login", auth.logIn)
 
 	// scanner routes
 	app.use(function(req, res, next) {
@@ -26,6 +26,9 @@ module.exports = function router(app) {
 
 		next()
 	})
+
+	// POS routes
+	app.post("/purchase", purchase.purchaseItems)
 
 	app.use(function(req, res, next) {
 		// if upc is on req.body, check if it is valid
@@ -84,7 +87,8 @@ module.exports = function router(app) {
 		}
 		next()
 	})
-	app.post('/inventory/:upc/price', inventory.setPrice)
+	app.delete('/auth/delete', auth.deleteUser)
+	app.post("/inventory/:upc/price", inventory.setPrice)
 	app.post("/inventory/add-item", inventory.addItem)
-	app.post('/inventory/:upc/set', inventory.setItem)
+	app.post("/inventory/:upc/set", inventory.setItem)
 }
