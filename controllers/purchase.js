@@ -1,7 +1,9 @@
 const db = require("../db")
 const { isValidUpc, flattenItems } = require("../helpers/util")
 
-module.exports = {}
+module.exports = {
+	purchaseItems
+}
 
 // generate an update query to insert into transaction
 function updateItem(ct, upc) {
@@ -12,6 +14,9 @@ function updateItem(ct, upc) {
 	// if (ct < 1 || !Number.isInteger(ct)) {
 	// 	throw Error(`invalid count: ${ct}`)
 	// }
+	if (!isValidUpc(upc)) {
+		throw new Error(`invalid upc: ${upc}`)
+	}
 	return `UPDATE items SET on_hand = on_hand - ${ct} WHERE upc = '${upc}';`
 }
 
@@ -54,11 +59,11 @@ function purchaseItems(req, res) {
 					res.status(500).json({ error: err })
 				}
 
-				client.query('COMMIT', err => {
-					if(err) {
+				client.query("COMMIT", err => {
+					if (err) {
 						res.status(500).json({ error: err })
 					}
-					 done()
+					done()
 				})
 			})
 		})
