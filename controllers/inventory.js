@@ -13,7 +13,7 @@ module.exports = {
 // CONTROLLERS
 function getAllItems(req, res) {
 	db.query("SELECT * from items ORDER BY upc DESC").then(result => {
-		return res.send({ items: result.rows })
+		return res.json({ items: result.rows })
 	})
 }
 
@@ -25,9 +25,9 @@ function getItem(req, res) {
 		[upc]
 	).then(result => {
 		if (result.rowCount < 1) {
-			res.send({ message: `${upc} not in database` })
+			res.json({ error: `${upc} not in database` })
 		}
-		return res.send(result.rows[0])
+		return res.json(result.rows[0])
 	})
 }
 
@@ -40,7 +40,7 @@ function addItem(req, res) {
 		if (checkResult.rowCount > 0) {
 			return res
 				.status(409)
-				.send({ message: `item already exists with upc: ${upc}` })
+				.json({ error: `item already exists with upc: ${upc}` })
 		}
 		// if not, save item to db
 		db.query("INSERT INTO items VALUES ($1, $2, $3, $4, $5, $6)", [
@@ -51,7 +51,7 @@ function addItem(req, res) {
 			case_sz,
 			price
 		]).then(saveResult => {
-			return res.send({ message: "successfully added item to database" })
+			return res.json({ message: "successfully added item to database" })
 		})
 	})
 }

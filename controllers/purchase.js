@@ -14,7 +14,7 @@ function purchaseItems(req, res) {
 	listify(items)
 
 	let updateError
-	
+
 	client.exists("items", (err, exists) => {
 		if (exists) {
 			client.llen("items", (err, len) => {
@@ -24,10 +24,17 @@ function purchaseItems(req, res) {
 						db.query("UPDATE items SET on_hand = on_hand - $1 WHERE upc = $2", [
 							ct,
 							upc
-						]).then().catch(e => {console.log(e)})
+						])
+							.then()
+							.catch(e => {
+								return res.json({
+									error: "error completeing transaction",
+									message: e
+								})
+							})
 					})
 				}
-				return res.send({ message: "purchase successful" })
+				return res.json({ message: "purchase successful" })
 			})
 		}
 	})
