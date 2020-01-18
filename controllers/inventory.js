@@ -21,7 +21,7 @@ function getItem(req, res) {
 	let upc = req.params.upc
 
 	db.query(
-		"SELECT item, on_hand, shelf_cap, case_sz, price FROM items WHERE upc = $1",
+		"SELECT item, upc, on_hand, shelf_cap, case_sz, price FROM items WHERE upc = $1",
 		[upc]
 	).then(result => {
 		if (result.rowCount < 1) {
