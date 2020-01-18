@@ -20,14 +20,14 @@ function getUsers(req, res) {
 function createNewUser(req, res) {
 	let { name, password, role } = req.body
 	if (!name || !password) {
-		return res.status(422).json({ error: "must supply name and password" })
+		return res.status(422).json({ error: "Must supply name and password." })
 	}
 	if (role !== "admin" && role !== "manager") {
 		role = "employee"
 	}
 	let ifUser = userByName(name).then(user => {
 		if (user.rowCount > 0) {
-			return res.status(400).json({ error: "user already exists" })
+			return res.status(400).json({ error: "User already exists." })
 		}
 		db.query(
 			"INSERT INTO users (name, password, role) VALUES ($1, crypt($2, gen_salt('bf')), $3);",
@@ -47,23 +47,24 @@ function createNewUser(req, res) {
 
 function logIn(req, res) {
 	let { name, password } = req.body
+	console.log(name, password)
 	if (!name || !password) {
-		return res.status(422).json({ error: "must supply name and password" })
+		return res.status(422).json({ error: "Must supply name and password." })
 	}
 
 	let ifUser = userByName(name).then(user => {
 		if (user.rowCount == 0) {
-			return res.status(400).json({ error: "user does not exist" })
+			return res.status(400).json({ error: "User does not exist." })
 		}
 		db.query(
 			"select id, role from users where name = $1 and password = crypt($2, password)",
 			[name, password]
 		).then(result => {
 			if (result.rowCount == 0) {
-				return res.status(400).json({ error: "incorrect password" })
+				return res.status(400).json({ error: "Incorrect password." })
 			}
 			const token = jwt.sign(result.rows[0], process.env.JWT_SECRET, {
-				expiresIn: "1h"
+				expiresIn: "1d"
 			})
 			return res.status(200).json({ token })
 		})
